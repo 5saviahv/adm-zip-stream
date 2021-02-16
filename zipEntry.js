@@ -293,44 +293,53 @@ module.exports = function (/*Buffer*/ input) {
         },
 
         packHeader: function () {
+            // 1. create header (buffer)
             var header = _entryHeader.entryHeaderToBinary();
-            // add
-            _entryName.copy(header, Utils.Constants.CENHDR);
+            var addpos = Utils.Constants.CENHDR;
+            // 2. add file name
+            _entryName.copy(header, addpos);
+            addpos += _entryName.length;
+            // 3. add extra data
             if (_entryHeader.extraLength) {
-                _extra.copy(header, Utils.Constants.CENHDR + _entryName.length);
+                _extra.copy(header, addpos);
+                addpos += _entryHeader.extraLength;
             }
+            // 4. add file comment
             if (_entryHeader.commentLength) {
-                _comment.copy(header, Utils.Constants.CENHDR + _entryName.length + _entryHeader.extraLength, _comment.length);
+                _comment.copy(header, addpos);
             }
             return header;
         },
 
+        toJSON: function () {
+            const out = {};
+            out["entryName"] = _entryName.toString();
+            out["name"] = _isDirectory ? _entryName.toString().replace(/\/$/, "").split("/").pop() : _entryName.toString().split("/").pop();
+            out["comment"] = _comment.toString();
+            out["isDirectory"] = _isDirectory;
+            out["header"] = _entryHeader.toString().replace(/\t/gm, "\t\t").replace(/}/gm, "\t}");
+            out["compressedData"] = "<" + ((input && input.length + " bytes buffer") || "null") + ">";
+            out["data"] = "<" + ((uncompressedData && uncompressedData.length + " bytes buffer") || "null") + ">";
+            return out;
+        },
+
         toString: function () {
-            return (
-                "{\n" +
-                '\t"entryName" : "' +
-                _entryName.toString() +
-                '",\n' +
-                '\t"name" : "' +
-                (_isDirectory ? _entryName.toString().replace(/\/$/, "").split("/").pop() : _entryName.toString().split("/").pop()) +
-                '",\n' +
-                '\t"comment" : "' +
-                _comment.toString() +
-                '",\n' +
-                '\t"isDirectory" : ' +
-                _isDirectory +
-                ",\n" +
-                '\t"header" : ' +
-                _entryHeader.toString().replace(/\t/gm, "\t\t").replace(/}/gm, "\t}") +
-                ",\n" +
-                '\t"compressedData" : <' +
-                ((input && input.length + " bytes buffer") || "null") +
-                ">\n" +
-                '\t"data" : <' +
-                ((uncompressedData && uncompressedData.length + " bytes buffer") || "null") +
-                ">\n" +
+            // encode to string
+            const entryName = _entryName.toString();
+            // format name
+            const name = _isDirectory ? entryName.replace(/\/$/, "").split("/").pop() : entryName.split("/").pop();
+
+            return [
+                "{",
+                '\t"entryName" : "' + entryName + '",',
+                '\t"name" : "' + name + '",',
+                '\t"comment" : "' + _comment.toString() + '",',
+                '\t"isDirectory" : ' + _isDirectory + ",",
+                '\t"header" : ' + _entryHeader.toString().replace(/\t/gm, "\t\t").replace(/}/gm, "\t}") + ",",
+                '\t"compressedData" : <' + ((input && input.length + " bytes buffer") || "null") + ">",
+                '\t"data" : <' + ((uncompressedData && uncompressedData.length + " bytes buffer") || "null") + ">",
                 "}"
-            );
+            ].join("\n");
         }
     };
 };

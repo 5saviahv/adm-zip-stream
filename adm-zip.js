@@ -671,7 +671,6 @@ module.exports = function (/**String*/ input) {
          * @return Buffer
          */
         toBuffer: function (/**Function=*/ onSuccess, /**Function=*/ onFail, /**Function=*/ onItemStart, /**Function=*/ onItemEnd) {
-            this.valueOf = 2;
             if (typeof onSuccess === "function") {
                 _zip.toAsyncBuffer(onSuccess, onFail, onItemStart, onItemEnd);
                 return null;

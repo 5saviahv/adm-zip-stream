@@ -305,58 +305,26 @@ module.exports = function () {
         },
 
         toString: function () {
-            return (
-                "{\n" +
-                '\t"made" : ' +
-                _verMade +
-                ",\n" +
-                '\t"version" : ' +
-                _version +
-                ",\n" +
-                '\t"flags" : ' +
-                _flags +
-                ",\n" +
-                '\t"method" : ' +
-                Utils.methodToString(_method) +
-                ",\n" +
-                '\t"time" : ' +
-                this.time +
-                ",\n" +
-                '\t"crc" : 0x' +
-                _crc.toString(16).toUpperCase() +
-                ",\n" +
-                '\t"compressedSize" : ' +
-                _compressedSize +
-                " bytes,\n" +
-                '\t"size" : ' +
-                _size +
-                " bytes,\n" +
-                '\t"fileNameLength" : ' +
-                _fnameLen +
-                ",\n" +
-                '\t"extraLength" : ' +
-                _extraLen +
-                " bytes,\n" +
-                '\t"commentLength" : ' +
-                _comLen +
-                " bytes,\n" +
-                '\t"diskNumStart" : ' +
-                _diskStart +
-                ",\n" +
-                '\t"inAttr" : ' +
-                _inattr +
-                ",\n" +
-                '\t"attr" : ' +
-                _attr +
-                ",\n" +
-                '\t"offset" : ' +
-                _offset +
-                ",\n" +
-                '\t"entryHeaderSize" : ' +
-                (Constants.CENHDR + _fnameLen + _extraLen + _comLen) +
-                " bytes\n" +
+            return [
+                "{",
+                '\t"made" : ' + _verMade + ",",
+                '\t"version" : ' + _version + ",",
+                '\t"flags" : ' + _flags + ",",
+                '\t"method" : ' + Utils.methodToString(_method) + ",",
+                '\t"time" : ' + this.time + ",",
+                '\t"crc" : 0x' + _crc.toString(16).toUpperCase() + ",",
+                '\t"compressedSize" : ' + _compressedSize + " bytes,",
+                '\t"size" : ' + _size + " bytes,",
+                '\t"fileNameLength" : ' + _fnameLen + ",",
+                '\t"extraLength" : ' + _extraLen + " bytes,",
+                '\t"commentLength" : ' + _comLen + " bytes,",
+                '\t"diskNumStart" : ' + _diskStart + ",",
+                '\t"inAttr" : ' + _inattr + ",",
+                '\t"attr" : ' + _attr + ",",
+                '\t"offset" : ' + _offset + ",",
+                '\t"entryHeaderSize" : ' + (Constants.CENHDR + _fnameLen + _extraLen + _comLen) + " bytes",
                 "}"
-            );
+            ].join("\n");
         }
     };
 };

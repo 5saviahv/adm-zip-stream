@@ -106,25 +106,15 @@ module.exports = function () {
         },
 
         toString: function () {
-            return (
-                "{\n" +
-                '\t"diskEntries" : ' +
-                _volumeEntries +
-                ",\n" +
-                '\t"totalEntries" : ' +
-                _totalEntries +
-                ",\n" +
-                '\t"size" : ' +
-                _size +
-                " bytes,\n" +
-                '\t"offset" : 0x' +
-                _offset.toString(16).toUpperCase() +
-                ",\n" +
-                '\t"commentLength" : 0x' +
-                _commentLength +
-                "\n" +
+            return [
+                "{",
+                '\t"diskEntries" : ' + _volumeEntries + ",",
+                '\t"totalEntries" : ' + _totalEntries + ",",
+                '\t"size" : ' + _size + " bytes,",
+                '\t"offset" : 0x' + _offset.toString(16).toUpperCase() + ",",
+                '\t"commentLength" : 0x' + _commentLength,
                 "}"
-            );
+            ].join("\n");
         }
     };
 };
