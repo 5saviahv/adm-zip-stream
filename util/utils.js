@@ -194,6 +194,17 @@ module.exports = (function () {
 
         setAttributes: function (/*String*/ path) {},
 
+        winFileAttributes: function (/*Number*/ fileattr, /*String*/ attrib) {
+            if (typeof attrib === "string") {
+                const list = attrib.toUpperCase().split("");
+                for (const ch of list) {
+                    const index = "RHSvdA".indexOf(ch);
+                    if (index > -1) fileattr |= 2 ** index;
+                }
+            }
+            return fileattr;
+        },
+
         toBuffer: function (input) {
             if (Buffer.isBuffer(input)) {
                 return input;

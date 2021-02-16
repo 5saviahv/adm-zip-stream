@@ -391,40 +391,32 @@ module.exports = function (/**String*/ input) {
          */
         addFile: function (/**String*/ entryName, /**Buffer*/ content, /**String*/ comment, /**Number*/ attr) {
             // prepare new entry
-            var entry = new ZipEntry();
+            const entry = new ZipEntry();
             entry.entryName = entryName;
             entry.comment = comment || "";
 
-            var isStat = "object" === typeof attr && attr instanceof fs.Stats;
+            const isStat = "object" === typeof attr && attr instanceof fs.Stats;
 
             // last modification time from file stats
             if (isStat) {
                 entry.header.time = attr.mtime;
             }
 
-            // Set file attribute
-            var fileattr = entry.isDirectory ? 0x10 : 0; // (MS-DOS directory flag)
+            // set UNIX file Attribute
+            // set file type either S_IFDIR / S_IFREG
+            let unix = entry.isDirectory ? 0x4000 : 0x8000;
 
-            // extended attributes field for Unix
-            if ("win32" !== process.platform) {
-                // set file type either S_IFDIR / S_IFREG
-                var unix = entry.isDirectory ? 0x4000 : 0x8000;
-
-                if (isStat) {
-                    // File attributes from file stats
-                    unix |= 0xfff & attr.mode;
-                } else if ("number" === typeof attr) {
-                    // attr from given attr values
-                    unix |= 0xfff & attr;
-                } else {
-                    // Default values:
-                    unix |= entry.isDirectory ? 0o755 : 0o644; // permissions (drwxr-xr-x) or (-r-wr--r--)
-                }
-
-                fileattr = (fileattr | (unix << 16)) >>> 0; // add attributes
+            if (isStat) {
+                // File attributes from file stats
+                unix |= 0xfff & attr.mode;
+            } else if ("number" === typeof attr) {
+                // attr from given attr values
+                unix |= 0xfff & attr;
+            } else {
+                // Default values:
+                unix |= entry.isDirectory ? 0o755 : 0o644; // permissions (drwxr-xr-x) or (-r-wr--r--)
             }
-
-            entry.attr = fileattr;
+            entry.fileAttr = unix;
 
             entry.setData(content);
             _zip.setEntry(entry);
@@ -499,9 +491,8 @@ module.exports = function (/**String*/ input) {
                     }
                     var name = canonical(child.entryName);
                     var childName = sanitize(targetPath, maintainEntryPath ? name : pth.basename(name));
-                    // The reverse operation for attr depend on method addFile()
-                    var fileAttr = child.attr ? (((child.attr >>> 0) | 0) >> 16) & 0xfff : 0;
-                    Utils.writeFileTo(childName, content, overwrite, fileAttr);
+
+                    Utils.writeFileTo(childName, content, overwrite, child.fileAttr);
                 });
                 return true;
             }
@@ -512,9 +503,8 @@ module.exports = function (/**String*/ input) {
             if (fs.existsSync(target) && !overwrite) {
                 throw new Error(Utils.Errors.CANT_OVERRIDE);
             }
-            // The reverse operation for attr depend on method addFile()
-            var fileAttr = item.attr ? (((item.attr >>> 0) | 0) >> 16) & 0xfff : 0;
-            Utils.writeFileTo(target, content, overwrite, fileAttr);
+
+            Utils.writeFileTo(target, content, overwrite, item.fileAttr);
 
             return true;
         },
@@ -566,9 +556,8 @@ module.exports = function (/**String*/ input) {
                 if (!content) {
                     throw new Error(Utils.Errors.CANT_EXTRACT_FILE);
                 }
-                // The reverse operation for attr depend on method addFile()
-                var fileAttr = entry.attr ? (((entry.attr >>> 0) | 0) >> 16) & 0xfff : 0;
-                Utils.writeFileTo(entryName, content, overwrite, fileAttr);
+
+                Utils.writeFileTo(entryName, content, overwrite, entry.fileAttr);
                 try {
                     fs.utimesSync(entryName, entry.header.time, entry.header.time);
                 } catch (err) {
@@ -619,9 +608,7 @@ module.exports = function (/**String*/ input) {
                         return;
                     }
 
-                    // The reverse operation for attr depend on method addFile()
-                    var fileAttr = entry.attr ? (((entry.attr >>> 0) | 0) >> 16) & 0xfff : 0;
-                    Utils.writeFileToAsync(sanitize(targetPath, entryName), content, overwrite, fileAttr, function (succ) {
+                    Utils.writeFileToAsync(sanitize(targetPath, entryName), content, overwrite, entry.fileAttr, function (succ) {
                         try {
                             fs.utimesSync(pth.resolve(targetPath, entryName), entry.header.time, entry.header.time);
                         } catch (err) {

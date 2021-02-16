@@ -284,6 +284,14 @@ module.exports = function (/*Buffer*/ input) {
             return _entryHeader.attr;
         },
 
+        // https://unix.stackexchange.com/questions/14705/the-zip-formats-external-file-attribute
+        get fileAttr() {
+            return (_entryHeader.attr >>> 16) & 0xfff;
+        },
+        set fileAttr(val) {
+            _entryHeader.attr = ((_entryHeader.attr & 0x3f) | (val << 16)) >>> 0;
+        },
+
         set header(/*Buffer*/ data) {
             _entryHeader.loadFromBinary(data);
         },
