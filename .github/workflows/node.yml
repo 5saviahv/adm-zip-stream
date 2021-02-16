@@ -40,7 +40,7 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-v${{ matrix.node-version }}-${{ hashFiles('package.json') }}-${{ hashFiles('package-lock.json') }}
-          restore-key: |
+          restore-keys: |
             ${{ runner.os }}-node-v${{ matrix.node-version }}-${{ hashFiles('package.json') }}-${{ hashFiles('package-lock.json') }}
             ${{ runner.os }}-node-v${{ matrix.node-version }}-
 
