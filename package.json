@@ -1,21 +1,26 @@
 {
-  "name": "adm-zip",
-  "version": "0.5.2",
+  "name": "adm-zip-stream",
+  "version": "0.5.2a",
   "description": "Javascript implementation of zip for nodejs with support for electron original-fs. Allows user to create or extract zip files both in memory or to/from disk",
   "scripts": {
-    "test": "mocha test/mocha.js test/crc/index.js test/multibyte/test.js"
+    "test": "npm run test:format && npm run test:mocha",
+    "test:mocha": "mocha test/mocha.js test/crc/index.js test/multibyte/test.js",
+    "test:format": "npm run format:prettier:raw -- --check",
+    "format": "npm run format:prettier",
+    "format:prettier": "npm run format:prettier:raw -- --write",
+    "format:prettier:raw": "prettier \"**/*.{js,yml,json}\""
   },
   "keywords": [
     "zip",
     "methods",
     "archive",
-    "unzip"
+    "unzip",
+    "adm-zip"
   ],
-  "homepage": "https://github.com/cthackers/adm-zip",
+  "homepage": "https://github.com/5saviahv/adm-zip-stream",
   "author": "Nasca Iacob <sy@another-d-mention.ro> (https://github.com/cthackers)",
   "bugs": {
-    "email": "sy@another-d-mention.ro",
-    "url": "https://github.com/cthackers/adm-zip/issues"
+    "url": "https://github.com/5saviahv/adm-zip-stream/issues"
   },
   "license": "MIT",
   "files": [
@@ -30,7 +35,7 @@
   "main": "adm-zip.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cthackers/adm-zip.git"
+    "url": "https://github.com/5saviahv/adm-zip-stream.git"
   },
   "engines": {
     "node": ">=6.0"
