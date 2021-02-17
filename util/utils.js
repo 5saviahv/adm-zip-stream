@@ -24,16 +24,16 @@ module.exports = (function () {
         });
     }
 
-    function findSync(/*String*/ dir, /*RegExp*/ pattern, /*Boolean*/ recoursive) {
+    function findSync(/*String*/ dir, /*RegExp*/ pattern, /*Boolean*/ recursive) {
         if (typeof pattern === "boolean") {
-            recoursive = pattern;
+            recursive = pattern;
             pattern = undefined;
         }
         var files = [];
         fs.readdirSync(dir).forEach(function (file) {
             var path = pth.join(dir, file);
 
-            if (fs.statSync(path).isDirectory() && recoursive) files = files.concat(findSync(path, pattern, recoursive));
+            if (fs.statSync(path).isDirectory() && recursive) files = files.concat(findSync(path, pattern, recursive));
 
             if (!pattern || pattern.test(path)) {
                 files.push(pth.normalize(path) + (fs.statSync(path).isDirectory() ? PATH_SEPARATOR : ""));
