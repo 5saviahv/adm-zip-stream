@@ -19,7 +19,7 @@ jobs:
           days-before-pr-stale: 360
           days-before-issue-close: 5
           days-before-pr-close: -1
-          stale-issue-label: "no-issue-activity"
-          stale-pr-label: "no-pr-activity"
-          exempt-issue-labels: "awaiting-feedback,awaiting-answers,work-in-progress"
-          exempt-pr-labels: "awaiting-approval,work-in-progress"
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+          exempt-issue-labels: "awaiting feedback,work in progress"
+          exempt-pr-labels: "awaiting feedback,work in progress"
